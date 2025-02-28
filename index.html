@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Official website of an iOS developer, showcasing apps, projects, and contributions to the Apple ecosystem.">
-    <meta name="author" content="Your Name">
+    <meta name="author" content="Stodian">
     <title>Stodian – iOS Developer Portfolio</title>
     <style>
         body {
@@ -36,20 +36,70 @@
             font-size: 18px;
             line-height: 1.6;
         }
-        .links {
+
+        /* Carousel Styling */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin: 30px 0;
+        }
+
+        .carousel {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none; /* Hide scrollbar on Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar on Edge */
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none; /* Hide scrollbar on Chrome/Safari */
+        }
+
+        .app-card {
+            flex: 0 0 60%;
+            scroll-snap-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .app-card.highlight {
+            transform: scale(1.1);
+            background-color: #007aff;
+            color: white;
+        }
+
+        /* Navigation Buttons */
+        .carousel-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
             margin-top: 20px;
         }
-        .links a {
-            text-decoration: none;
-            color: #007aff;
-            font-weight: bold;
-            font-size: 18px;
-            display: inline-block;
-            margin: 10px;
+
+        .carousel-buttons button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
         }
-        .links a:hover {
-            text-decoration: underline;
+
+        .carousel-buttons button:hover {
+            background: #005bb5;
         }
+
         footer {
             margin-top: 50px;
             padding: 20px;
@@ -70,12 +120,31 @@
         <p>I'm an iOS developer building innovative apps for Apple devices. I specialize in Swift, SwiftUI, and optimizing user experiences.</p>
         
         <h2>My Work</h2>
-        <p>Here are some of my ongoing projects and contributions:</p>
-        <ul>
-            <li>📱 <strong>App 1:</strong> [Brief description of an app]</li>
-            <li>🛠️ <strong>App 2:</strong> [Another project you're working on]</li>
-            <li>🚀 <strong>Future Plans:</strong> Expanding into AI-driven app development</li>
-        </ul>
+        <p>Explore some of my latest projects:</p>
+
+        <!-- Carousel Section -->
+        <div class="carousel-container">
+            <div class="carousel" id="carousel">
+                <div class="app-card highlight">
+                    <h3>📱 App 1</h3>
+                    <p>A cutting-edge productivity tool for iOS.</p>
+                </div>
+                <div class="app-card">
+                    <h3>🛠️ App 2</h3>
+                    <p>An AI-powered fitness tracker.</p>
+                </div>
+                <div class="app-card">
+                    <h3>🚀 Future App</h3>
+                    <p>Expanding into AI-driven app development.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="carousel-buttons">
+            <button onclick="scrollLeft()">⬅️ Prev</button>
+            <button onclick="scrollRight()">Next ➡️</button>
+        </div>
 
         <div class="links">
             <a href="https://github.com/Stodian" target="_blank">GitHub</a>
@@ -87,6 +156,49 @@
     <footer>
         &copy; 2025 Stodian – All Rights Reserved
     </footer>
+
+    <script>
+        const carousel = document.getElementById("carousel");
+        let scrollAmount = 0;
+        const step = 300; // Adjust scrolling speed
+
+        function scrollLeft() {
+            carousel.scrollBy({ left: -step, behavior: "smooth" });
+            highlightCenterCard();
+        }
+
+        function scrollRight() {
+            carousel.scrollBy({ left: step, behavior: "smooth" });
+            highlightCenterCard();
+        }
+
+        function highlightCenterCard() {
+            const cards = document.querySelectorAll(".app-card");
+            cards.forEach(card => card.classList.remove("highlight"));
+
+            // Find the closest card to the center
+            let centerCard = cards[0];
+            let minDiff = Math.abs(carousel.scrollLeft - cards[0].offsetLeft);
+
+            cards.forEach(card => {
+                let diff = Math.abs(carousel.scrollLeft + carousel.offsetWidth / 2 - card.offsetLeft - card.offsetWidth / 2);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    centerCard = card;
+                }
+            });
+
+            centerCard.classList.add("highlight");
+        }
+
+        // Auto-highlight the center app on scroll
+        carousel.addEventListener("scroll", () => {
+            clearTimeout(window.highlightTimeout);
+            window.highlightTimeout = setTimeout(highlightCenterCard, 100);
+        });
+
+        highlightCenterCard(); // Highlight initial card
+    </script>
 
 </body>
 </html>
